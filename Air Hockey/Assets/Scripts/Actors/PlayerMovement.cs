@@ -18,13 +18,13 @@ public class PlayerMovement : MonoBehaviour
     // A boolean flag indicating whether the player can move.
     private bool _canMove;
 
-    // A Vector2 storing the size of the player character.
-    private Vector2 _playerSize;
-
     // A Rigidbody2D field. 
     private Rigidbody2D _rigidbody;
 
-    // a public Transform field 'BoundaryHolder' to reference the boundaries.
+    // A player collider
+    private Collider2D _playerCollider;
+
+    // A public Transform field 'BoundaryHolder' to reference the boundaries.
     public Transform BoundaryHolder;
 
     // A Boundary struct to store boundary positions.
@@ -36,11 +36,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        // Initializes _playerSize by getting the size of the sprite renderer's bounds.
-        _playerSize = gameObject.GetComponentInChildren<SpriteRenderer>().bounds.extents;
-
-        // Intializes _rigidbody.
+        // Initializes _rigidbody.
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
+
+        // Initializes _playerCollider.
+        _playerCollider = GetComponent<Collider2D>();
 
         // Extracts boundary positions from BoundaryHolder.
         _playerBoundary = new Boundary(BoundaryHolder.GetChild(0).position.y,
@@ -66,10 +66,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 _wasJustClicked = false;
 
-                if ((mousePosition.x >= transform.position.x && mousePosition.x < transform.position.x + _playerSize.x ||
-                mousePosition.x <= transform.position.x && mousePosition.x > transform.position.x - _playerSize.x) &&
-                (mousePosition.y >= transform.position.y && mousePosition.y < transform.position.y + _playerSize.y ||
-                mousePosition.y <= transform.position.y && mousePosition.y > transform.position.y - _playerSize.y))
+                if (_playerCollider.OverlapPoint(mousePosition))
                 {
                     // If it is, _canMove is set to true, allowing movement.
                     _canMove = true;
